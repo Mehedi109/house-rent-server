@@ -3,6 +3,7 @@ const app = express();
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
+const { application } = require("express");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -19,7 +20,16 @@ async function run() {
     await client.connect();
     const database = client.db("house_rent");
     const rentDatabase = database.collection("rent");
+
+    //get api for rent
+    app.get("/rent", async (req, res) => {
+      const cursor = rentDatabase.find({});
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+
     // post api add house rent
+
     app.post("/rent", async (req, res) => {
       const servieces = req.body;
       const result = await rentDatabase.insertOne(servieces);
