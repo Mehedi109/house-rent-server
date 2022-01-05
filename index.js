@@ -61,15 +61,6 @@ async function run() {
       const result = await rentDatabase.deleteOne(query);
       res.send(result);
     });
-
-    // post api add house rent
-
-    app.post("/rent", async (req, res) => {
-      const servieces = req.body;
-      const result = await rentDatabase.insertOne(servieces);
-      console.log("hited", result);
-      res.json(result);
-    });
   } finally {
     // await client.close()
   }
