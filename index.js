@@ -94,6 +94,21 @@ async function run() {
       console.log(result);
       res.json(result);
     });
+
+    // get api of orders
+    app.get("/orders", async (req, res) => {
+      const orders = ordersCollection.find({});
+      const result = await orders.toArray();
+      res.json(result);
+    });
+
+    // delete api of order
+    app.delete("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
     // await client.close()
   }
