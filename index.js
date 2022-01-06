@@ -70,6 +70,13 @@ async function run() {
       console.log(result);
       res.json(result);
     });
+
+    // get api of contact
+    app.get("/contact", async (req, res) => {
+      const getContact = contactCollection.find({});
+      const result = await getContact.toArray();
+      res.json(result);
+    });
   } finally {
     // await client.close()
   }
