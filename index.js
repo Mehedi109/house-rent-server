@@ -23,6 +23,7 @@ async function run() {
     await client.connect();
     const database = client.db("house_rent");
     const rentDatabase = database.collection("rent");
+    const contactCollection = database.collection("contact");
 
     //get api for rent
     app.get("/houses", async (req, res) => {
@@ -60,6 +61,14 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await rentDatabase.deleteOne(query);
       res.send(result);
+    });
+
+    // post api of contact
+    app.post("/contact", async (req, res) => {
+      const contact = req.body;
+      const result = await contactCollection.insertOne(contact);
+      console.log(result);
+      res.json(result);
     });
   } finally {
     // await client.close()
