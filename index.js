@@ -24,12 +24,21 @@ async function run() {
     const database = client.db("house_rent");
     const rentDatabase = database.collection("rent");
     const contactCollection = database.collection("contact");
+    const ordersCollection = database.collection("order");
 
-    //get api for rent
+    //get api for house
     app.get("/houses", async (req, res) => {
       const cursor = rentDatabase.find({});
       const services = await cursor.toArray();
       res.send(services);
+    });
+
+    //get api for specific house
+    app.get("/houses/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await rentDatabase.findOne(query);
+      res.send(result);
     });
 
     // post api of houses
@@ -75,6 +84,14 @@ async function run() {
     app.get("/contact", async (req, res) => {
       const getContact = contactCollection.find({});
       const result = await getContact.toArray();
+      res.json(result);
+    });
+
+    // post api of order
+    app.post("/order", async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      console.log(result);
       res.json(result);
     });
   } finally {
