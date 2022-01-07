@@ -25,6 +25,7 @@ async function run() {
     const rentDatabase = database.collection("rent");
     const contactCollection = database.collection("contact");
     const ordersCollection = database.collection("order");
+    const reviewsCollection = database.collection("review");
 
     //get api for house
     app.get("/houses", async (req, res) => {
@@ -109,6 +110,14 @@ async function run() {
       const result = await ordersCollection.deleteOne(query);
       res.send(result);
     });
+
+    // post api of review
+    app.post("/review", async (req, res) => {
+      const review = req.body;
+      const result = await reviewsCollection.insertOne(review);
+      console.log(result);
+      res.json(result);
+    });
   } finally {
     // await client.close()
   }
@@ -120,5 +129,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Lisning from http://localhost:${port}`);
+  console.log(`Listening from http://localhost:${port}`);
 });
