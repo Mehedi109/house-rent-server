@@ -118,6 +118,13 @@ async function run() {
       console.log(result);
       res.json(result);
     });
+
+    // get api of reviews
+    app.get("/reviews", async (req, res) => {
+      const reviews = reviewsCollection.find({});
+      const result = await reviews.toArray();
+      res.json(result);
+    });
   } finally {
     // await client.close()
   }
