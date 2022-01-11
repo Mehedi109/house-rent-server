@@ -28,14 +28,14 @@ async function run() {
     const reviewsCollection = database.collection("review");
     const usersCollection = database.collection("users");
 
-    //get api for house
+    // get api for house
     app.get("/houses", async (req, res) => {
       const cursor = rentDatabase.find({});
       const services = await cursor.toArray();
       res.send(services);
     });
 
-    //get api for specific house
+    // get api for specific house
     app.get("/houses/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -89,6 +89,23 @@ async function run() {
       res.json(result);
     });
 
+    // get api of contact for login user
+    app.get("/messages", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const contact = contactCollection.find(query);
+      const result = await contact.toArray();
+      res.json(result);
+    });
+
+    // delete api of contact
+    app.delete("/contact/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await contactCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // post api of order
     app.post("/order", async (req, res) => {
       const order = req.body;
@@ -100,6 +117,15 @@ async function run() {
     // get api of orders
     app.get("/orders", async (req, res) => {
       const orders = ordersCollection.find({});
+      const result = await orders.toArray();
+      res.json(result);
+    });
+
+    // get api of orders for login user
+    app.get("/myOrders", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const orders = ordersCollection.find(query);
       const result = await orders.toArray();
       res.json(result);
     });
