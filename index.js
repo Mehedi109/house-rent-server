@@ -26,6 +26,7 @@ async function run() {
     const contactCollection = database.collection("contact");
     const ordersCollection = database.collection("order");
     const reviewsCollection = database.collection("review");
+    const usersCollection = database.collection("users");
 
     //get api for house
     app.get("/houses", async (req, res) => {
@@ -125,6 +126,53 @@ async function run() {
       const result = await reviews.toArray();
       res.json(result);
     });
+
+    // post api for users
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const cursor = await usersCollection.insertOne(user);
+      res.send(cursor);
+    });
+
+    // get api of users
+    app.get("/users", async (req, res) => {
+      const users = usersCollection.find({});
+      const result = await users.toArray();
+      res.json(result);
+    });
+
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
+    });
+
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = { $set: user };
+      const result = await usersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
+    });
+
+    // put api of admin role
+    app.put("/users/admin", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.json(result);
+    });
   } finally {
     // await client.close()
   }
@@ -132,7 +180,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("hellow world");
+  res.send("hello world");
 });
 
 app.listen(port, () => {
